@@ -46,7 +46,7 @@ enum {
 -(id) init
 {
 	if( (self=[super init])) {
-		
+		_runningManHeightFactor=0.15;
 		// enable events
 		
 		self.isTouchEnabled = YES;
@@ -72,8 +72,18 @@ enum {
 #endif
 		[self addChild:parent z:0 tag:kTagParentNode];
 		
-		
-		[self addNewSpriteAtPosition:ccp(s.width/2, s.height/2)];
+        _runningMan=[CCSprite spriteWithFile:@"Icon-Small.png"];
+        _runningMan.position = ccp(s.width * 0.1, s.height * _runningManHeightFactor);
+		[self addChild:_runningMan z:1];
+        
+        _runningManObs=[CCSprite spriteWithFile:@"Icon.png"];
+        _runningManObs.position = ccp(s.width * 0.9, s.height * _runningManHeightFactor);
+		[self addChild:_runningManObs z:1];
+        
+ 
+
+        
+        //[self addNewSpriteAtPosition:ccp(s.width-10, s.height/2)];
 		
 		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
 		[self addChild:label z:0];
@@ -267,19 +277,44 @@ enum {
 	
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
-	world->Step(dt, velocityIterations, positionIterations);	
+	world->Step(dt, velocityIterations, positionIterations);
+    
+    
+    if (CGRectIntersectsRect(_runningMan.boundingBox, _runningManObs.boundingBox)) {
+        _runningMan.visible = NO;
+        _runningManObs.visible = NO;
+        return;
+    }
+    
+    float newx=_runningMan.position.x+3;
+    
+    if(_manIsJumping){
+        _runningMan.position = ccp(_runningMan.position.x, _runningMan.position.y+5);
+    }else{
+        if(_runningMan.position.y>[CCDirector sharedDirector].winSize.height * _runningManHeightFactor)
+            _runningMan.position = ccp(_runningMan.position.x, _runningMan.position.y-5);
+    }
+    _runningMan.position = ccp(newx, _runningMan.position.y);
+
+    
+    
+    if(_runningMan.position.y>[CCDirector sharedDirector].winSize.height * 0.7){
+        _manIsJumping=NO;
+    }
+    
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	//Add a new body/atlas sprite at the touched location
-	for( UITouch *touch in touches ) {
-		CGPoint location = [touch locationInView: [touch view]];
-		
-		location = [[CCDirector sharedDirector] convertToGL: location];
-		
-		[self addNewSpriteAtPosition: location];
-	}
+//	for( UITouch *touch in touches ) {
+//		CGPoint location = [touch locationInView: [touch view]];
+//		
+//		location = [[CCDirector sharedDirector] convertToGL: location];
+//		
+//		[self addNewSpriteAtPosition: location];
+//	}
+    _manIsJumping=true;
 }
 
 #pragma mark GameKit delegate

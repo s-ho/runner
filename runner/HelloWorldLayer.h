@@ -26,6 +26,11 @@
 	CCTexture2D *spriteTexture_;	// weak ref
 	b2World* world;					// strong ref
 	GLESDebugDraw *m_debugDraw;		// strong ref
+    
+    CCSprite *_runningMan;
+    CCSprite *_runningManObs;
+    float _runningManHeightFactor;
+    bool _manIsJumping;
 }
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
