@@ -11,7 +11,6 @@
 
 // Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
-
 #import "PhysicsSprite.h"
 
 enum {
