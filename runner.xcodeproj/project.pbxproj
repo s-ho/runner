@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11EB39A41665029E000D2ADF /* mini1.png in Resources */ = {isa = PBXBuildFile; fileRef = 11EB39A31665029E000D2ADF /* mini1.png */; };
 		E78C11811664E48100A6E245 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78C11801664E48100A6E245 /* QuartzCore.framework */; };
 		E78C11831664E48100A6E245 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78C11821664E48100A6E245 /* OpenGLES.framework */; };
 		E78C11851664E48100A6E245 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78C11841664E48100A6E245 /* OpenAL.framework */; };
@@ -184,6 +185,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		11EB39A31665029E000D2ADF /* mini1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mini1.png; sourceTree = "<group>"; };
 		E78C117C1664E48100A6E245 /* runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78C11801664E48100A6E245 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E78C11821664E48100A6E245 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -635,6 +637,7 @@
 				E78C11A61664E48100A6E245 /* Icon.png */,
 				E78C11A81664E48100A6E245 /* Icon@2x.png */,
 				E78C11AA1664E48100A6E245 /* Info.plist */,
+				11EB39A31665029E000D2ADF /* mini1.png */,
 				E78C11AB1664E48100A6E245 /* iTunesArtwork */,
 				E78C13AC1664E48400A6E245 /* blocks.png */,
 			);
@@ -1206,6 +1209,7 @@
 				E78C11AC1664E48100A6E245 /* iTunesArtwork in Resources */,
 				E78C12EA1664E48300A6E245 /* ChangeLog in Resources */,
 				E78C13AD1664E48400A6E245 /* blocks.png in Resources */,
+				11EB39A41665029E000D2ADF /* mini1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
