@@ -30,7 +30,7 @@ enum {
 @implementation HelloWorldLayer
 
 +(CCScene *) scene
-{
+{     
 	// 'scene' is an autorelease object.
 	CCScene *scene = [CCScene node];
 	
