@@ -186,6 +186,8 @@
 
 /* Begin PBXFileReference section */
 		11EB39A31665029E000D2ADF /* mini1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mini1.png; sourceTree = "<group>"; };
+		E727C0C71665235C001CCDF2 /* RunnerBackground.pdn */ = {isa = PBXFileReference; lastKnownFileType = file; name = RunnerBackground.pdn; path = Resources/RunnerBackground.pdn; sourceTree = "<group>"; };
+		E727C0C81665235C001CCDF2 /* RunnerForeground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RunnerForeground.png; path = Resources/RunnerForeground.png; sourceTree = "<group>"; };
 		E78C117C1664E48100A6E245 /* runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78C11801664E48100A6E245 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E78C11821664E48100A6E245 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -625,6 +627,8 @@
 		E78C11931664E48100A6E245 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E727C0C71665235C001CCDF2 /* RunnerBackground.pdn */,
+				E727C0C81665235C001CCDF2 /* RunnerForeground.png */,
 				E78C11941664E48100A6E245 /* Default.png */,
 				E78C11961664E48100A6E245 /* Default-Landscape~ipad.png */,
 				E78C11981664E48100A6E245 /* fps_images.png */,
