@@ -3,8 +3,7 @@
 //  runner
 //
 //  Created by Sven Holmgren on 11/27/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
-//
+
 
 
 #import <GameKit/GameKit.h>
