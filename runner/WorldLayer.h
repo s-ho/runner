@@ -20,7 +20,7 @@
 #define PTM_RATIO 32
 
 
-@interface WorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
+@interface WorldLayer : CCLayer
 {
 	CCTexture2D *spriteTexture_;	// weak ref
 	b2World* world;					// strong ref

@@ -108,7 +108,7 @@ enum {
     CGSize s = [[CCDirector sharedDirector] winSize];
     
     b2Vec2 gravity;
-    gravity.Set(0.0f, -10.0f);
+    gravity.Set(0.0f, -9.8f);
     world = new b2World(gravity);
     
     
@@ -141,8 +141,9 @@ enum {
     // Define the ground box shape.
     b2EdgeShape groundBox;
     
-    //world width
+    //world dimensions
     float width=s.width*15.0f;
+    float height=s.height*2.0f;
     float FLOOR_HEIGHT=10.0f;
     
     // bottom
@@ -150,15 +151,15 @@ enum {
     groundBody->CreateFixture(&groundBox,0);
     
     // top
-    groundBox.Set(b2Vec2(0,s.height/PTM_RATIO), b2Vec2(width/PTM_RATIO,s.height/PTM_RATIO));
+    groundBox.Set(b2Vec2(0,height/PTM_RATIO), b2Vec2(width/PTM_RATIO,height/PTM_RATIO));
     groundBody->CreateFixture(&groundBox,0);
     
     // left
-    groundBox.Set(b2Vec2(0,s.height/PTM_RATIO), b2Vec2(0,0));
+    groundBox.Set(b2Vec2(0,height/PTM_RATIO), b2Vec2(0,0));
     groundBody->CreateFixture(&groundBox,0);
     
     // right
-    groundBox.Set(b2Vec2(width/PTM_RATIO,s.height/PTM_RATIO), b2Vec2(width/PTM_RATIO,0));
+    groundBox.Set(b2Vec2(width/PTM_RATIO,height/PTM_RATIO), b2Vec2(width/PTM_RATIO,0));
     groundBody->CreateFixture(&groundBox,0);
 }
 
@@ -169,6 +170,7 @@ enum {
     // This is only for debug purposes
     // It is recommend to disable it
     //
+    /*
     [super draw];
     
     ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
@@ -178,6 +180,7 @@ enum {
     world->DrawDebugData();
     
     kmGLPopMatrix();
+*/
 }
 
 
@@ -222,17 +225,5 @@ enum {
 }
 
 #pragma mark GameKit delegate
-
--(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
-{
-    AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-    [[app navController] dismissModalViewControllerAnimated:YES];
-}
-
--(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
-{
-    AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-    [[app navController] dismissModalViewControllerAnimated:YES];
-}
 
 @end
