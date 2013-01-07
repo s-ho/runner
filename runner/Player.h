@@ -1,8 +1,8 @@
 //
-//  Player.h
-//  runner
+// Player.h
+// runner
 //
-//  Created by Sven Holmgren on 1/6/13.
+// Created by Sven Holmgren on 1/6/13.
 //
 //
 #import "cocos2d.h"
@@ -10,7 +10,7 @@
 #import "CCSprite.h"
 
 @interface Player : CCSprite{
-    b2Body          *body;
+    b2Body *body;
     
 }
 

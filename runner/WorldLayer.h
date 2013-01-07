@@ -5,7 +5,6 @@
 //  Created by Sven Holmgren on 11/27/12.
 
 
-
 #import <GameKit/GameKit.h>
 
 // When you import this file, you import all the cocos2d classes
@@ -20,8 +19,8 @@
 //to define the ratio so that your most common object type is 1x1 metre.
 #define PTM_RATIO 32
 
-// HelloWorldLayer
-@interface HelloWorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
+
+@interface WorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
 {
 	CCTexture2D *spriteTexture_;	// weak ref
 	b2World* world;					// strong ref
