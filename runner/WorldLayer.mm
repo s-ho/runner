@@ -21,7 +21,6 @@ enum {
 
 @interface WorldLayer()
 -(void) initPhysics;
--(void) createMenu;
 @end
 
 @implementation WorldLayer
@@ -47,13 +46,15 @@ enum {
         // enable events
         
         self.isTouchEnabled = YES;
-        self.isAccelerometerEnabled = YES;
+        self.isAccelerometerEnabled = NO;
         
         // init physics
         [self initPhysics];
+      
         
-        // create reset button
-        [self createMenu];
+        // Create contact listener
+        _contactListener = new ContactListener();
+        world->SetContactListener(_contactListener);
         
         
         //create player
@@ -78,29 +79,13 @@ enum {
     delete m_debugDraw;
     m_debugDraw = NULL;
     
+    delete _contactListener;
+    
+    
     [super dealloc];
 }
 
--(void) createMenu
-{
-    // Default font size will be 22 points.
-    [CCMenuItemFont setFontSize:22];
-    
-    // Reset Button
-    CCMenuItemLabel *reset = [CCMenuItemFont itemWithString:@"Reset" block:^(id sender){
-        [[CCDirector sharedDirector] replaceScene: [WorldLayer scene]];
-    }];
-    
-    CCMenu *menu = [CCMenu menuWithItems:reset, nil];
-    
-    [menu alignItemsVertically];
-    
-    CGSize size = [[CCDirector sharedDirector] winSize];
-    [menu setPosition:ccp( size.width/2, size.height/1.2)];
-    
-    
-    [self addChild: menu z:-1];
-}
+
 
 -(void) initPhysics
 {
@@ -161,6 +146,8 @@ enum {
     // right
     groundBox.Set(b2Vec2(width/PTM_RATIO,height/PTM_RATIO), b2Vec2(width/PTM_RATIO,0));
     groundBody->CreateFixture(&groundBox,0);
+    
+    
 }
 
 -(void) draw
@@ -192,6 +179,9 @@ enum {
     //You need to make an informed choice, the following URL is useful
     //http://gafferongames.com/game-physics/fix-your-timestep/
     
+    //yeah yeah, we have no iphone to test performance with anyway.
+    
+    
     int32 velocityIterations = 8;
     int32 positionIterations = 1;
     
@@ -201,20 +191,59 @@ enum {
     
     
     
-    //Iterate over the bodies in the physics world
+    //Iterate over the bodies in the physics world, and update the sprites
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
 		if (b->GetUserData() != NULL) {
-			CCSprite *myActor = (CCSprite*)b->GetUserData();
-			myActor.position = CGPointMake( b->GetPosition().x * PTM_RATIO,
+			CCSprite *sprite = (CCSprite*)b->GetUserData();
+			sprite.position = CGPointMake( b->GetPosition().x * PTM_RATIO,
                                            b->GetPosition().y * PTM_RATIO);
-			myActor.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
+			sprite.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
 	}
     
-    //set the 'camera'
+    //handle contacts
+    std::vector<b2Body *>toDestroy;
+    std::vector<Contact>::iterator pos;
+    for(pos = _contactListener->_contacts.begin(); pos != _contactListener->_contacts.end(); ++pos) {
+        Contact contact = *pos;
+
+        b2Body *bodyA = contact.fixtureA->GetBody();
+        b2Body *bodyB = contact.fixtureB->GetBody();
+        if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
+            CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
+            CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
+            
+            // Sprite A = player, Sprite B = collectible
+            if (spriteA.tag == TAG_PLAYER && spriteB.tag == TAG_COLLECTIBLE) {
+                if (std::find(toDestroy.begin(), toDestroy.end(), bodyB)
+                    == toDestroy.end()) {
+                    toDestroy.push_back(bodyB);
+                }
+            }
+            // Sprite B = collectible, Sprite A = player
+            else if (spriteA.tag == TAG_COLLECTIBLE && spriteB.tag == TAG_PLAYER) {
+                if (std::find(toDestroy.begin(), toDestroy.end(), bodyA)
+                    == toDestroy.end()) {
+                    toDestroy.push_back(bodyA);
+                }
+            }
+        }    
+    }
     
-	b2Vec2 pos = [player body]->GetPosition();
-	CGPoint newPos = ccp(-1 * pos.x * PTM_RATIO + 120, self.position.y * PTM_RATIO);
+    std::vector<b2Body *>::iterator pos2;
+    for(pos2 = toDestroy.begin(); pos2 != toDestroy.end(); ++pos2) {
+        b2Body *body = *pos2;
+        if (body->GetUserData() != NULL) {
+            CCSprite *sprite = (CCSprite *) body->GetUserData();
+            [self removeChild:sprite cleanup:YES];
+        }
+        world->DestroyBody(body);
+    }
+    
+    
+    //set the 'camera'
+	b2Vec2 playerPos = [player body]->GetPosition();
+	CGPoint newPos = ccp(-1 * playerPos.x * PTM_RATIO + 120, self.position.y * PTM_RATIO);
 	[self setPosition:newPos];
     
 }

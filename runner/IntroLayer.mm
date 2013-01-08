@@ -3,21 +3,20 @@
 //  runner
 //
 //  Created by Sven Holmgren on 11/27/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
 //
 
 
 // Import the interfaces
 #import "IntroLayer.h"
 #import "WorldLayer.h"
-
+static const ccColor3B ccDARKRED={139,0,0};
 
 #pragma mark - IntroLayer
 
-// HelloWorldLayer implementation
+// WorldLayer implementation
 @implementation IntroLayer
 
-// Helper class method that creates a Scene with the HelloWorldLayer as the only child.
+// Helper class method that creates a Scene with the WorldLayer as the only child.
 +(CCScene *) scene
 {
 	// 'scene' is an autorelease object.
@@ -43,9 +42,9 @@
 
 	CCSprite *background;
 	
+    
 	if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
 		background = [CCSprite spriteWithFile:@"Default.png"];
-		background.rotation = 90;
 	} else {
 		background = [CCSprite spriteWithFile:@"Default-Landscape~ipad.png"];
 	}
@@ -53,9 +52,31 @@
 
 	// add the label as a child to this Layer
 	[self addChild: background];
+    
+    [self createMenu];
 	
-	// In one second transition to the new scene
-	[self scheduleOnce:@selector(makeTransition:) delay:1];
+}
+
+-(void) createMenu
+{
+    [CCMenuItemFont setFontSize:22];
+    [CCMenuItemFont setFontSize:22];
+    // Play Button
+    CCMenuItemLabel *play = [CCMenuItemFont itemWithString:@"Play" block:^(id sender){
+        [self scheduleOnce:@selector(makeTransition:) delay:1];
+    }];
+    
+    [play setColor:(ccDARKRED)];
+    
+    CCMenu *menu = [CCMenu menuWithItems:play, nil];
+    
+    [menu alignItemsVertically];
+    
+    CGSize size = [[CCDirector sharedDirector] winSize];
+    [menu setPosition:ccp( size.width/2, size.height/3.5)];
+    
+    
+    [self addChild: menu ];
 }
 
 -(void) makeTransition:(ccTime)dt

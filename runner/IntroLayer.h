@@ -3,7 +3,6 @@
 //  runner
 //
 //  Created by Sven Holmgren on 11/27/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
 //
 
 
@@ -16,7 +15,7 @@
     
 }
 
-// returns a CCScene that contains the HelloWorldLayer as the only child
+// returns a CCScene that contains the WorldLayer as the only child
 +(CCScene *) scene;
 
 @end

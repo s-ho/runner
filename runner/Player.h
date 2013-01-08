@@ -4,14 +4,14 @@
 //
 // Created by Sven Holmgren on 1/6/13.
 //
-//
+
 #import "cocos2d.h"
 #import "Box2D.h"
 #import "CCSprite.h"
+#import "GameObject.h"
 
-@interface Player : CCSprite{
+@interface Player : GameObject{
     b2Body *body;
-    
 }
 
 -(void) createBox2dObject:(b2World*)world;

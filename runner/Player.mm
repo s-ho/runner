@@ -15,8 +15,9 @@
     self = [super init];
     
     if (self) {
-        
+        self.tag=TAG_PLAYER;
     }
+    
     return self;
 }
 
@@ -38,7 +39,6 @@
     fixtureDef.friction = 0.0f;
     fixtureDef.restitution = 0.0f;
     
-    
     body->CreateFixture(&fixtureDef);
 }
 
@@ -48,10 +48,12 @@
 }
 
 -(void) jump {
-    b2Vec2 impulse = b2Vec2(0.0f, 15.0f);
-    body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
+    //with timing, it is possible to jump in air
+    if(abs((body->GetLinearVelocity()).y)==0){
+        b2Vec2 impulse = b2Vec2(0.0f, 15.0f);
+        body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
+    }
 }
-
 
 - (void)dealloc
 {
