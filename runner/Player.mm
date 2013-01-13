@@ -34,7 +34,6 @@
     
     body = world->CreateBody(&playerBodyDef);
     
-    
     b2PolygonShape shape;
     shape.SetAsBox([self boundingBox].size.width/2.0f/PTM_RATIO, [self boundingBox].size.height/2.0f/PTM_RATIO);
     
@@ -59,7 +58,7 @@
 }
 
 -(void) jump:(int)power {
-    //with timing, it is possible to jump in air
+    //with timing, it is possible to jump in middle air, 
     
     if(isAlive){
     if(abs((body->GetLinearVelocity()).y)<0.01f){
@@ -71,6 +70,7 @@
 
 -(void) die {
     if(isAlive){
+        isAlive=NO;
         CCAnimation *frames=[CCAnimation animationWithSpriteFrames:[NSArray arrayWithObjects:
                                                                     [CCSpriteFrame frameWithTextureFilename:@"die.png" rect:CGRectMake(0,0,40,65) ],
                                                                     [CCSpriteFrame frameWithTextureFilename:@"die2.png" rect:CGRectMake(0,0,40,65) ],
@@ -79,7 +79,6 @@
         CCRepeatForever *repeat =[CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:frames]];
         [self stopAllActions];
         [self runAction:repeat];
-        isAlive=NO;
         body->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
     }
     

@@ -14,6 +14,4 @@
 }
 
 
-- (void) update;
-
 @end

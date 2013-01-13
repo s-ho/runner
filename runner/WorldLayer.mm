@@ -36,7 +36,6 @@ enum {
     
     [layer release];
     
-    // return the scene
     return scene;
 }
 
@@ -48,10 +47,8 @@ enum {
 -(id) initWithLevel:(int)level
 {
     if(self=[super init]) {
-        [self createInterface];
-        
         backgroundOffset = 0;
-        
+        self->currentLevel=0;
         
         NSError ** error=nil;
         self->tbxml = [[TBXML newTBXMLWithXMLFile:@"levels.xml" error:error] retain];
@@ -62,15 +59,15 @@ enum {
         [TBXML iterateElementsForQuery:@"level" fromElement:rootXMLElement withBlock:^(TBXMLElement *levelXMLElement) {
             
            NSString * name = [TBXML valueOfAttributeNamed:@"name" forElement:levelXMLElement];
-        
+        //
             if([name intValue]==level){
                 self->currentLevel=level;
+                
+                [self createHUD];
+                
                 //create background
                 [self genBackground: [TBXML textForElement:[TBXML childElementNamed:@"background" parentElement:levelXMLElement]]];
                 
-                // enable events
-                self.isTouchEnabled = YES;
-                self.isAccelerometerEnabled = NO;
                 
                 // init physics
                 levelWidth=[[TBXML textForElement:[TBXML childElementNamed:@"width" parentElement:levelXMLElement]] floatValue];
@@ -132,14 +129,25 @@ enum {
                 
                 [self scheduleUpdate];
             }
+            
+            
 
         }];
 
         
         if(self->currentLevel!=level){
             //end game
+            self->currentLevel=-1;
+            CGSize winSize = [[CCDirector sharedDirector] winSize];
+            CCSprite *hehe=[CCSprite spriteWithFile:@"end.png"];
+            hehe.position=CGPointMake(winSize.width/2.0f, winSize.height/2.0f);
+            [self addChild:hehe z:4];
+            
         }
         
+        // enable events
+        self.isTouchEnabled = YES;
+        self.isAccelerometerEnabled = NO;
     }
     return self;
 }
@@ -155,7 +163,7 @@ enum {
 
 -(void)addCollectible:(NSString*)file atPosition:(float)position isCircle:(BOOL)isCircle {
     Collectible * Ob=[Collectible spriteWithFile:file];
-    Ob.position = ccp(position,  FLOOR_HEGHT+250 +[Ob boundingBox].size.height/2);
+    Ob.position = ccp(position,  FLOOR_HEGHT+200 +[Ob boundingBox].size.height/2);
     
     [Ob createBox2dObject:world isCircle:isCircle];
     [self addChild:Ob];
@@ -163,13 +171,16 @@ enum {
 
 -(void)addPowerUp:(NSString*)file atPosition:(float)position isCircle:(BOOL)isCircle {
     PowerUp * Ob=[PowerUp spriteWithFile:file];
-    Ob.position = ccp(position,  FLOOR_HEGHT+350 +[Ob boundingBox].size.height/2);
+    Ob.position = ccp(position,  FLOOR_HEGHT+300 +[Ob boundingBox].size.height/2);
     
     [Ob createBox2dObject:world isCircle:isCircle];
     [self addChild:Ob];
 }
 
+//Background generator
 - (void)genBackground:(NSString*)file {
+    
+    
     _background =[CCSprite spriteWithFile:file ] ;
     _background.position = ccp([_background boundingBox].size.width/2, [_background boundingBox].size.height/2);
     ccTexParams tp = {GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
@@ -209,7 +220,7 @@ enum {
     world->SetContinuousPhysics(true);
     
     
-    
+    /*
     m_debugDraw = new GLESDebugDraw( PTM_RATIO );
     world->SetDebugDraw(m_debugDraw);
     
@@ -220,7 +231,7 @@ enum {
     // flags += b2Draw::e_pairBit;
     // flags += b2Draw::e_centerOfMassBit;
     m_debugDraw->SetFlags(flags);
-    
+    */
     
     // Define the ground body.
     b2BodyDef groundBodyDef;
@@ -258,6 +269,7 @@ enum {
     
 }
 
+/*
 -(void) draw
 {
     //
@@ -265,7 +277,7 @@ enum {
     // This is only for debug purposes
     // It is recommend to disable it
     //
-    ///*
+    
     [super draw];
     
     ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
@@ -275,9 +287,9 @@ enum {
     world->DrawDebugData();
     
      kmGLPopMatrix();
-//*/
-}
 
+}
+//*/
 
 -(void) update: (ccTime) dt
 {
@@ -374,7 +386,8 @@ enum {
                     }
                 }
                 else
-                    [self dieAction];            }
+                    [self dieAction];
+            }
             // Sprite A = player, Sprite B = powerup
             if (spriteA.tag == TAG_PLAYER && spriteB.tag == TAG_POWERUP) {
                 if (std::find(toDestroy.begin(), toDestroy.end(), bodyB)
@@ -400,6 +413,7 @@ enum {
         }    
     }
     
+    //clean up removed bodies
     std::vector<b2Body *>::iterator pos2;
     for(pos2 = toDestroy.begin(); pos2 != toDestroy.end(); ++pos2) {
         b2Body *body = *pos2;
@@ -424,8 +438,12 @@ enum {
     _background.position = ccp([_background boundingBox].size.width/2+backgroundOffset, [_background boundingBox].size.height/2);
     
     
-    if(abs(oldPos.x)>levelWidth-([_background boundingBox].size.width/2+1.0f)){
-        [self scheduleOnce:@selector(restartLevel:) delay:2];
+    if(abs(oldPos.x)>levelWidth-([_background boundingBox].size.width/2+1.0f) ){
+        //remember that the collectibles need to be at least as many as the current level
+        if(player.collectibles>=self->currentLevel){
+            [self scheduleOnce:@selector(nextLevel:) delay:2.0f];
+        }else
+            [self scheduleOnce:@selector(restartLevel:) delay:2.0f];
     }
 }
 
@@ -433,20 +451,9 @@ enum {
     if([player isAlive]){
         [player die];
         [self Explosion:player.position];
-        [self scheduleOnce:@selector(restartLevel:) delay:2];
+        [self scheduleOnce:@selector(restartLevel:) delay:2.0f];
     }
 }
-
-
-- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    int fingersUsed=[touches count];
-    
-    if(fingersUsed>1)
-        [player jump:fingersUsed];
-}
-
-
 
 -(void) Explosion:(CGPoint)atPosition{
     
@@ -463,7 +470,7 @@ enum {
                                             rotated:NO offset:ccp(0,0)
                                             originalSize:CGSizeMake(192,192)
                                             ]];
-       }
+        }
     }
     
     CCAnimation *frames=[CCAnimation
@@ -474,8 +481,25 @@ enum {
                                 [CCCallFuncN actionWithTarget:spriteExplosion selector:@selector(removeFromParentAndCleanup:)],
                                 nil]];
     
-
+    
 }
+
+
+- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if(self->currentLevel<0)
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:2.0f scene:[IntroLayer scene] withColor:ccWHITE]];
+    
+    
+    int fingersUsed=[touches count];
+    
+    //two to four fingers, decides jump height
+    if(fingersUsed>1 && fingersUsed<5)
+        [player jump:fingersUsed];
+}
+
+
+
 
 -(void) restartLevel:(ccTime)dt
 {
@@ -488,7 +512,9 @@ enum {
 }
 
 
--(void) createInterface
+
+
+-(void) createHUD
 {
     CCParallaxNode *UI=[CCParallaxNode node];
     CGSize winSize = [[CCDirector sharedDirector] winSize];
@@ -514,10 +540,29 @@ enum {
                                           }
                                       }];
     
+    //sound button
+    CCMenuItem *soundOnItem = [CCMenuItemImage itemWithNormalImage:@"unmuted.png"
+                                                     selectedImage:@"unmuted.png"];
+    
+    CCMenuItem *soundOffItem = [CCMenuItemImage  itemWithNormalImage:@"muted.png"
+                                                       selectedImage:@"muted.png"];
+    
+    NSArray * soundItems;
+    
+    soundItems =([SimpleAudioEngine sharedEngine].mute)?[NSArray arrayWithObjects:  soundOffItem,soundOnItem, nil]:[NSArray arrayWithObjects: soundOnItem, soundOffItem, nil];
     
     
-    CCMenu *menu = [CCMenu menuWithItems:pauseToggler, nil];
-    [menu alignItemsVertically];
+    CCMenuItemToggle *soundToggler = [CCMenuItemToggle itemWithItems:soundItems
+                                                               block:^(id sender)
+                                      {
+                                          [[SimpleAudioEngine sharedEngine] setMute:![SimpleAudioEngine sharedEngine].mute];
+                                      }];
+    
+    
+    
+    
+    CCMenu *menu = [CCMenu menuWithItems:pauseToggler,soundToggler, nil];
+    [menu alignItemsHorizontallyWithPadding:32.0f ];
     //end 'menu'
     
     
@@ -527,14 +572,14 @@ enum {
     [powerUpLabel setColor:(ccRED)];
     
     //collectible counterLabel
-    collectibleLabel=[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%d",player.collectibles] fontName:@"Helvetica" fontSize:24];
+    collectibleLabel=[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%d/%d",player.collectibles, self->currentLevel] fontName:@"Helvetica" fontSize:24];
     [collectibleLabel setColor:(ccRED)];
     
     CCSprite * powerUpLogo=[CCSprite spriteWithFile:@"powerup.png"];
     CCSprite * collectibleLogo=[CCSprite spriteWithFile:@"notes.png"];
     
     
-    [UI addChild:menu z:7 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(winSize.width-pauseItem.boundingBox.size.width,pauseItem.boundingBox.size.height)];
+    [UI addChild:menu z:7 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(winSize.width-pauseItem.boundingBox.size.width*3,pauseItem.boundingBox.size.height)];
     
     [UI addChild:powerUpLabel z:6 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(winSize.width-powerUpLabel.boundingBox.size.width*2,
                                                                                   winSize.height-powerUpLabel.boundingBox.size.height)];
@@ -542,7 +587,7 @@ enum {
     [UI addChild:powerUpLogo z:6 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(powerUpLabel.position.x- powerUpLogo.boundingBox.size.width,
                                                                                   winSize.height-powerUpLabel.boundingBox.size.height)];
     
-    [UI addChild:collectibleLabel z:6 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(winSize.width-collectibleLabel.boundingBox.size.width*8,
+    [UI addChild:collectibleLabel z:6 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(winSize.width-collectibleLabel.boundingBox.size.width*4,
                                                                                   winSize.height-collectibleLabel.boundingBox.size.height)];
     
     [UI addChild:collectibleLogo z:6 parallaxRatio:ccp(0.0f,0.0f) positionOffset:ccp(collectibleLabel.position.x- collectibleLogo.boundingBox.size.width,
@@ -559,7 +604,7 @@ enum {
 
 -(void)updateCollectibleCounterLabel
 {
-    [collectibleLabel setString:[NSString stringWithFormat:@"%d",player.collectibles]] ;
+    [collectibleLabel setString:[NSString stringWithFormat:@"%d/%d",player.collectibles, self->currentLevel]] ;
 }
 
 @end

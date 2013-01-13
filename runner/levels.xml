@@ -16,18 +16,64 @@
         <isCircle>NO</isCircle>
         <atFloorHeight>NO</atFloorHeight>
       </obstacle>
+        <obstacle>
+            <file>car.png</file>
+            <atPosition>9000.0</atPosition>
+            <isCircle>NO</isCircle>
+            <atFloorHeight>YES</atFloorHeight>
+        </obstacle>
     </obstacles>
     <collectibles>
       <collectible>
         <file>notes.png</file>
-        <atPosition>3000.0</atPosition>
+        <atPosition>500.0</atPosition>
         <isCircle>NO</isCircle>
       </collectible>
-      <collectible>
-        <file>notes.png</file>
-        <atPosition>1500.0</atPosition>
-        <isCircle>NO</isCircle>
-      </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>800.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>1500.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>2400.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>3000.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>4000.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>5500.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>7000.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>8000.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
+        <collectible>
+            <file>notes.png</file>
+            <atPosition>9500.0</atPosition>
+            <isCircle>NO</isCircle>
+        </collectible>
     </collectibles>
     <powerups>
     <powerup>
@@ -37,13 +83,116 @@
     </powerup>
       <powerup>
         <file>powerup.png</file>
-        <atPosition>9500.0</atPosition>
+        <atPosition>5000.0</atPosition>
         <isCircle>YES</isCircle>
       </powerup>
     </powerups>
 	</level>
     
 	<level name="2">
-        
+        <background>houses.png</background>
+        <width>12000</width>
+        <obstacles>
+            <obstacle>
+                <file>car.png</file>
+                <atPosition>1500.0</atPosition>
+                <isCircle>NO</isCircle>
+                <atFloorHeight>YES</atFloorHeight>
+            </obstacle>
+            <obstacle>
+                <file>road.png</file>
+                <atPosition>4000.0</atPosition>
+                <isCircle>NO</isCircle>
+                <atFloorHeight>NO</atFloorHeight>
+            </obstacle>
+            <obstacle>
+                <file>road.png</file>
+                <atPosition>5000.0</atPosition>
+                <isCircle>NO</isCircle>
+                <atFloorHeight>NO</atFloorHeight>
+            </obstacle>
+            <obstacle>
+                <file>car.png</file>
+                <atPosition>7500.0</atPosition>
+                <isCircle>NO</isCircle>
+                <atFloorHeight>YES</atFloorHeight>
+            </obstacle>
+            <obstacle>
+                <file>car.png</file>
+                <atPosition>10500.0</atPosition>
+                <isCircle>NO</isCircle>
+                <atFloorHeight>YES</atFloorHeight>
+            </obstacle>
+        </obstacles>
+        <collectibles>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>600.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>900.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>1700.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>2220.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>3300.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>4300.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>5500.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>6000.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>9000.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+            <collectible>
+                <file>notes.png</file>
+                <atPosition>10800.0</atPosition>
+                <isCircle>NO</isCircle>
+            </collectible>
+        </collectibles>
+        <powerups>
+            <powerup>
+                <file>powerup.png</file>
+                <atPosition>750.0</atPosition>
+                <isCircle>YES</isCircle>
+            </powerup>
+            <powerup>
+                <file>powerup.png</file>
+                <atPosition>4250.0</atPosition>
+                <isCircle>YES</isCircle>
+            </powerup>
+            <powerup>
+                <file>powerup.png</file>
+                <atPosition>6500.0</atPosition>
+                <isCircle>YES</isCircle>
+            </powerup>
+        </powerups>
 	</level>
+
 </levels>

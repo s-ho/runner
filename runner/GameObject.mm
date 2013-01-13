@@ -11,10 +11,6 @@
 
 @implementation GameObject
 
-// Update is called for every game object once every frame
-- (void) update
-{}
-
 - (void)dealloc
 {
     [super dealloc];

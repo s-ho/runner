@@ -40,7 +40,7 @@
     else //box
     {
         b2PolygonShape boxShape;
-        boxShape.SetAsBox(([self boundingBox].size.width/2-5.0f)/PTM_RATIO, ([self boundingBox].size.height/2-5.0f)/PTM_RATIO);
+        boxShape.SetAsBox(([self boundingBox].size.width/2)/PTM_RATIO, ([self boundingBox].size.height/2)/PTM_RATIO);
         
         shape=&boxShape;
     }

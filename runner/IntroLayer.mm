@@ -38,7 +38,7 @@ static const ccColor3B ccDARKRED={139,0,0};
 	[super onEnter];
 
     //music
-    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"mrbasket.mp3"];
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"mrbasket2.mp3"];
     
 	// ask director for the window size
 	CGSize size = [[CCDirector sharedDirector] winSize];
@@ -78,7 +78,12 @@ static const ccColor3B ccDARKRED={139,0,0};
     CCMenuItem *soundOffItem = [CCMenuItemImage  itemWithNormalImage:@"muted.png"
                                                       selectedImage:@"muted.png"];
    
-    CCMenuItemToggle *soundToggler = [CCMenuItemToggle itemWithItems:[NSArray arrayWithObjects: soundOnItem, soundOffItem, nil]
+    NSArray * soundItems;
+    
+    soundItems =([SimpleAudioEngine sharedEngine].mute)?[NSArray arrayWithObjects:  soundOffItem,soundOnItem, nil]:[NSArray arrayWithObjects: soundOnItem, soundOffItem, nil];
+    
+    
+    CCMenuItemToggle *soundToggler = [CCMenuItemToggle itemWithItems:soundItems
                                                                block:^(id sender)
     {
         [[SimpleAudioEngine sharedEngine] setMute:![SimpleAudioEngine sharedEngine].mute];
