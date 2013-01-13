@@ -12,12 +12,14 @@
 
 @interface Player : GameObject{
     b2Body *body;
+    
+    bool isAlive;
 }
 
 -(void) createBox2dObject:(b2World*)world;
 -(void) jump;
 -(void) moveRight;
-
+-(void) die;
 
 @property (nonatomic, readwrite) b2Body *body;
 

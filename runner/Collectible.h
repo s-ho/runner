@@ -10,7 +10,10 @@
 #import "WorldLayer.h"
 
 @interface Collectible : GameObject {
-    
+    b2Body *body;
 }
+-(void) createBox2dObject:(b2World*)world isCircle:(BOOL) isCircle; 
+
+@property (nonatomic, readwrite) b2Body *body;
 
 @end

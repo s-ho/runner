@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<levels>
+	<level name="1">
+    <background>houses.png</background>
+    <width>10000</width>
+    <obstacles>
+        <obstacle>
+            <file>car.png</file>
+            <atPosition>2000.0</atPosition>
+            <isCircle>NO</isCircle>
+            <atFloorHeight>YES</atFloorHeight>
+        </obstacle>
+      <obstacle>
+        <file>road.png</file>
+        <atPosition>4000.0</atPosition>
+        <isCircle>NO</isCircle>
+        <atFloorHeight>NO</atFloorHeight>
+      </obstacle>
+    </obstacles>
+    <collectibles>
+      <collectible>
+        <file>car.png</file>
+        <atPosition>3000.0</atPosition>
+        <isCircle>NO</isCircle>
+      </collectible>
+      <collectible>
+        <file>car.png</file>
+        <atPosition>1500.0</atPosition>
+        <isCircle>NO</isCircle>
+      </collectible>
+    </collectibles>
+    <powerups>
+      <powerup>
+        <file>powerup.png</file>
+        <atPosition>3500.0</atPosition>
+        <isCircle>YES</isCircle>
+      </powerup>
+    </powerups>
+	</level>
+    
+	<level name="2">
+        
+	</level>
+</levels>

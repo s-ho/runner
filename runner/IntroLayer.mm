@@ -37,6 +37,9 @@ static const ccColor3B ccDARKRED={139,0,0};
 {
 	[super onEnter];
 
+    //music
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"mrbasket.mp3"];
+    
 	// ask director for the window size
 	CGSize size = [[CCDirector sharedDirector] winSize];
 
@@ -45,6 +48,7 @@ static const ccColor3B ccDARKRED={139,0,0};
     
 	if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
 		background = [CCSprite spriteWithFile:@"Default.png"];
+        background.rotation=-90;
 	} else {
 		background = [CCSprite spriteWithFile:@"Default-Landscape~ipad.png"];
 	}
@@ -60,20 +64,35 @@ static const ccColor3B ccDARKRED={139,0,0};
 -(void) createMenu
 {
     [CCMenuItemFont setFontSize:22];
-    [CCMenuItemFont setFontSize:22];
     // Play Button
     CCMenuItemLabel *play = [CCMenuItemFont itemWithString:@"Play" block:^(id sender){
         [self scheduleOnce:@selector(makeTransition:) delay:1];
     }];
     
+    //sound button
+    CCMenuItem *soundOnItem = [CCMenuItemImage itemWithNormalImage:@"unmuted.png"
+                                                     selectedImage:@"unmuted.png"];
+    
+    CCMenuItem *soundOffItem = [CCMenuItemImage  itemWithNormalImage:@"muted.png"
+                                                      selectedImage:@"muted.png"];
+   
+    CCMenuItemToggle *soundToggler = [CCMenuItemToggle itemWithItems:[NSArray arrayWithObjects: soundOnItem, soundOffItem, nil]
+                                                               block:^(id sender)
+    {
+        [[SimpleAudioEngine sharedEngine] setMute:![SimpleAudioEngine sharedEngine].mute];
+    }];
+
+    
+    
+    
     [play setColor:(ccDARKRED)];
     
-    CCMenu *menu = [CCMenu menuWithItems:play, nil];
+    CCMenu *menu = [CCMenu menuWithItems:play,soundToggler, nil];
     
     [menu alignItemsVertically];
     
     CGSize size = [[CCDirector sharedDirector] winSize];
-    [menu setPosition:ccp( size.width/2, size.height/3.5)];
+    [menu setPosition:ccp( size.width/2, size.height/4)];
     
     
     [self addChild: menu ];
@@ -81,6 +100,6 @@ static const ccColor3B ccDARKRED={139,0,0};
 
 -(void) makeTransition:(ccTime)dt
 {
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[WorldLayer scene] withColor:ccWHITE]];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:dt scene:[WorldLayer level:1] withColor:ccWHITE]];
 }
 @end

@@ -8,6 +8,7 @@
 
 // Import the interfaces
 #import "WorldLayer.h"
+#import "TBXML.h"
 
 // Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
@@ -20,18 +21,20 @@ enum {
 #pragma mark - WorldLayer
 
 @interface WorldLayer()
--(void) initPhysics;
+-(void) initPhysics:(float)worldWidth;
 @end
 
 @implementation WorldLayer
 
-+(CCScene *) scene
++(CCScene *) level:(int)level
 {
     // 'scene' is an autorelease object.
     CCScene *scene = [CCScene node];
     
     // 'layer' is an autorelease object.
-    WorldLayer *layer = [WorldLayer node];
+    WorldLayer *layer = [WorldLayer alloc];
+    [layer initWithLevel:level];
+    [layer autorelease];
     
     // add layer as a child to scene
     [scene addChild: layer];
@@ -42,33 +45,96 @@ enum {
 
 -(id) init
 {
-    if( (self=[super init])) {
-        // enable events
-        
-        self.isTouchEnabled = YES;
-        self.isAccelerometerEnabled = NO;
-        
-        // init physics
-        [self initPhysics];
-      
-        
-        // Create contact listener
-        _contactListener = new ContactListener();
-        world->SetContactListener(_contactListener);
+    return [self initWithLevel:1];
+}
+
+-(id) initWithLevel:(int)level
+{
+    if([super init]) {
+        NSError ** error=nil;
+        tbxml = [[TBXML newTBXMLWithXMLFile:@"levels.xml" error:error] retain];
+        TBXMLElement * rootXMLElement = tbxml.rootXMLElement;
         
         
-        //create player
-        player = [Player spriteWithFile:@"Icon-Small.png"];
-        player.position = ccp(100.0f, 180.0f);
-        [player createBox2dObject:world];
+        // iterate levels to find the current one
+        [TBXML iterateElementsForQuery:@"level" fromElement:rootXMLElement withBlock:^(TBXMLElement *levelXMLElement) {
+            
+           NSString * name = [TBXML valueOfAttributeNamed:@"name" forElement:levelXMLElement];
         
-        [self addChild:player];
-        [player moveRight];
-        
-        
-        [self scheduleUpdate];
+            if([name intValue]==level){
+                //create background
+                [self genBackground: [TBXML textForElement:[TBXML childElementNamed:@"background" parentElement:levelXMLElement]]];
+                
+                // enable events
+                self.isTouchEnabled = YES;
+                self.isAccelerometerEnabled = NO;
+                
+                // init physics
+                [self initPhysics:[[TBXML textForElement:[TBXML childElementNamed:@"width" parentElement:levelXMLElement]] floatValue]];
+                
+                
+                // Create contact listener
+                _contactListener = new ContactListener();
+                world->SetContactListener(_contactListener);
+                
+                
+                //create player
+                player = [Player spriteWithFile:@"srun1.png"];
+                CCAnimation *frames=[CCAnimation animationWithSpriteFrames:[NSArray arrayWithObjects:
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun1.png" rect:CGRectMake(0,0,74,86)],
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun2.png" rect:CGRectMake(0,0,74,87) ],
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun3.png" rect:CGRectMake(0,0,74,87) ],
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun4.png" rect:CGRectMake(0,0,74,87) ],
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun5.png" rect:CGRectMake(0,0,73,87) ],
+                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun6.png" rect:CGRectMake(0,0,74,87) ],
+                                                                            nil] delay:1.0/12.0 ];
+                
+                CCRepeatForever *repeat =[CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:frames]];
+                [player runAction:repeat];
+                
+                player.position = ccp(100.0f, FLOOR_HEGHT+[player boundingBox].size.height/2);
+                [player createBox2dObject:world];
+                
+                [self addChild:player];
+                [player moveRight];
+                
+                //Obstacles
+                TBXMLElement * obstaclesXMLElement =[TBXML childElementNamed:@"obstacles" parentElement:levelXMLElement];
+                [TBXML iterateElementsForQuery:@"obstacle" fromElement:obstaclesXMLElement withBlock:^(TBXMLElement *obstacleXMLElement) {
+                    [self addObstacle:[TBXML textForElement:[TBXML childElementNamed:@"file" parentElement:obstacleXMLElement]]
+                           atPosition:[[TBXML textForElement:[TBXML childElementNamed:@"atPosition" parentElement:obstacleXMLElement]] floatValue]
+                            isCircle:[[TBXML textForElement:[TBXML childElementNamed:@"isCircle" parentElement:obstacleXMLElement]] boolValue]
+                            atFloorHeight:[[TBXML textForElement:[TBXML childElementNamed:@"atFloorHeight" parentElement:obstacleXMLElement]] boolValue]
+                     ];
+                }];
+                
+                
+                
+                [self scheduleUpdate];
+            }
+
+        }];
+
     }
     return self;
+}
+
+
+-(void)addObstacle:(NSString*)file atPosition:(float)position isCircle:(BOOL)isCircle atFloorHeight:(BOOL) atFloorHeight{
+    Obstacle * Ob=[Obstacle spriteWithFile:file];
+    Ob.position = ccp(position, (atFloorHeight? FLOOR_HEGHT:0) +[Ob boundingBox].size.height/2);
+    
+    [Ob createBox2dObject:world isCircle:isCircle];
+    [self addChild:Ob];
+}
+
+- (void)genBackground:(NSString*)file {
+    _background =[CCSprite spriteWithFile:file ] ;
+    _background.position = ccp([_background boundingBox].size.width/2, [_background boundingBox].size.height/2);
+    ccTexParams tp = {GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
+    [_background.texture setTexParameters:&tp];
+    
+    [self addChild:_background z:-1];
 }
 
 -(void) dealloc
@@ -76,8 +142,8 @@ enum {
     delete world;
     world = NULL;
     
-    delete m_debugDraw;
-    m_debugDraw = NULL;
+    //delete m_debugDraw;
+    //m_debugDraw = NULL;
     
     delete _contactListener;
     
@@ -87,10 +153,10 @@ enum {
 
 
 
--(void) initPhysics
+-(void) initPhysics:(float)worldWidth
 {
     
-    CGSize s = [[CCDirector sharedDirector] winSize];
+    CGSize winSize = [[CCDirector sharedDirector] winSize];
     
     b2Vec2 gravity;
     gravity.Set(0.0f, -9.8f);
@@ -102,6 +168,7 @@ enum {
     
     world->SetContinuousPhysics(true);
     
+    /*
     m_debugDraw = new GLESDebugDraw( PTM_RATIO );
     world->SetDebugDraw(m_debugDraw);
     
@@ -112,7 +179,7 @@ enum {
     // flags += b2Draw::e_pairBit;
     // flags += b2Draw::e_centerOfMassBit;
     m_debugDraw->SetFlags(flags);
-    
+    */
     
     // Define the ground body.
     b2BodyDef groundBodyDef;
@@ -127,9 +194,9 @@ enum {
     b2EdgeShape groundBox;
     
     //world dimensions
-    float width=s.width*15.0f;
-    float height=s.height*2.0f;
-    float FLOOR_HEIGHT=10.0f;
+    float width=worldWidth;
+    float height=winSize.height*2.0f;
+    float FLOOR_HEIGHT=FLOOR_HEGHT;
     
     // bottom
     groundBox.Set(b2Vec2(0,FLOOR_HEIGHT/PTM_RATIO), b2Vec2(width/PTM_RATIO,FLOOR_HEIGHT/PTM_RATIO));
@@ -166,10 +233,9 @@ enum {
     
     world->DrawDebugData();
     
-    kmGLPopMatrix();
+     kmGLPopMatrix();
 */
 }
-
 
 
 -(void) update: (ccTime) dt
@@ -179,7 +245,7 @@ enum {
     //You need to make an informed choice, the following URL is useful
     //http://gafferongames.com/game-physics/fix-your-timestep/
     
-    //yeah yeah, we have no iphone to test performance with anyway.
+    //yeah yeah, we have no iphone to test with anyway.
     
     
     int32 velocityIterations = 8;
@@ -220,12 +286,21 @@ enum {
                     toDestroy.push_back(bodyB);
                 }
             }
-            // Sprite B = collectible, Sprite A = player
+            // Sprite A = collectible, Sprite B = player
             else if (spriteA.tag == TAG_COLLECTIBLE && spriteB.tag == TAG_PLAYER) {
                 if (std::find(toDestroy.begin(), toDestroy.end(), bodyA)
                     == toDestroy.end()) {
                     toDestroy.push_back(bodyA);
                 }
+            }
+            // Sprite A = OBSTACLE, Sprite B = player
+            else if (spriteA.tag == TAG_OBSTACLE && spriteB.tag == TAG_PLAYER ){
+                [self dieAction];
+                
+            }
+            // Sprite A = player, Sprite B = OBSTACLE
+            else if (spriteA.tag == TAG_PLAYER && spriteB.tag == TAG_OBSTACLE ) {
+                [self dieAction];
             }
         }    
     }
@@ -240,17 +315,55 @@ enum {
         world->DestroyBody(body);
     }
     
-    
     //set the 'camera'
 	b2Vec2 playerPos = [player body]->GetPosition();
+    CGPoint oldPos =[self position];
 	CGPoint newPos = ccp(-1 * playerPos.x * PTM_RATIO + 120, self.position.y * PTM_RATIO);
 	[self setPosition:newPos];
     
+    
+    //Background handling
+    static float offset = 0;
+    offset += oldPos.x-newPos.x;
+    CGSize textureSize = _background.textureRect.size;
+    [_background setTextureRect:CGRectMake(offset, 0, textureSize.width, textureSize.height)];
+    _background.position = ccp([_background boundingBox].size.width/2+offset, [_background boundingBox].size.height/2);
+    
+}
+
+-(void)dieAction{
+    [player die];
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [player jump];
+}
+
+-(void) Explosion:(CGPoint)atPosition{
+    
+//CCSprite *spriteExplosion = [CCSprite spriteWithFile:@"srun1.png"];
+//CCAnimation *frames=[CCAnimation animationWithSpriteFrames:[NSArray arrayWithObjects:
+//                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun1.png" rect:CGRectMake(0,0,74,86)],
+//                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun2.png" rect:CGRectMake(0,0,74,87) ],
+//                                                                            [CCSpriteFrame frameWithTextureFilename:@"srun3.png" rect:CGRectMake(0,0,74,87) ],
+ //                                                                           [CCSpriteFrame frameWithTextureFilename:@"srun4.png" rect:CGRectMake(0,0,74,87) ],
+ //                                                                           [CCSpriteFrame frameWithTextureFilename:@"srun5.png" rect:CGRectMake(0,0,73,87) ],
+ //                                                                           [CCSpriteFrame frameWithTextureFilename:@"srun6.png" rect:CGRectMake(0,0,74,87) ],
+ //                                                                           nil] delay:1.0/5.0 ];
+                
+  //              [player runAction:[CCSequence actions:[CCAnimate actionWithAnimation:frames restoreOriginalFrame:YES],
+ 
+//[CCCallFuncN actionWithTarget:self selector:@selector(spriteDone:)],nil]];
+
+}
+
+- (void)spriteDone:(id)sender {
+ 
+CCSprite *sprite = (CCSprite *)sender;
+ 
+[self removeChild:sprite cleanup:YES];
+ 
 }
 
 #pragma mark GameKit delegate

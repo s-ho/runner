@@ -15,7 +15,7 @@
     self = [super init];
     
     if (self) {
-        self.tag=TAG_PLAYER;
+        [self setState];
     }
     
     return self;
@@ -30,30 +30,57 @@
     
     body = world->CreateBody(&playerBodyDef);
     
-    b2CircleShape circleShape;
-    circleShape.m_radius = 0.7;
+    
+    b2PolygonShape shape;
+    shape.SetAsBox([self boundingBox].size.width/2/PTM_RATIO, [self boundingBox].size.height/2/PTM_RATIO);
     
     b2FixtureDef fixtureDef;
-    fixtureDef.shape = &circleShape;
+    fixtureDef.shape = &shape;
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.0f;
     fixtureDef.restitution = 0.0f;
     
     body->CreateFixture(&fixtureDef);
+    [self setState];
+}
+
+-(void)setState{
+    self.tag=TAG_PLAYER;
+    isAlive=YES;
 }
 
 -(void) moveRight {
-    b2Vec2 impulse = b2Vec2(8.0f, 0.0f);
+    b2Vec2 impulse = b2Vec2(PLAYER_SPEED, 0.0f);
     body->SetLinearVelocity(impulse);
 }
 
 -(void) jump {
     //with timing, it is possible to jump in air
-    if(abs((body->GetLinearVelocity()).y)==0){
-        b2Vec2 impulse = b2Vec2(0.0f, 15.0f);
+    
+    if(isAlive){
+    if(abs((body->GetLinearVelocity()).y)<0.01f){
+        b2Vec2 impulse = b2Vec2(0.0f, 50.0f);
         body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
     }
+    }
 }
+
+-(void) die {
+    if(isAlive){
+        CCAnimation *frames=[CCAnimation animationWithSpriteFrames:[NSArray arrayWithObjects:
+                                                                    [CCSpriteFrame frameWithTextureFilename:@"die.png" rect:CGRectMake(0,0,40,65) ],
+                                                                    [CCSpriteFrame frameWithTextureFilename:@"die2.png" rect:CGRectMake(0,0,40,65) ],
+                                                                    nil] delay:1.0/6.0 ];
+    
+        CCRepeatForever *repeat =[CCRepeatForever actionWithAction:[CCAnimate actionWithAnimation:frames]];
+        [self stopAllActions];
+        [self runAction:repeat];
+        isAlive=NO;
+        body->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
+    }
+    
+}
+
 
 - (void)dealloc
 {

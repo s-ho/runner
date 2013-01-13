@@ -1,20 +1,21 @@
 //
-//  Collectible.m
+//  Obstacle.m
 //  runner
 //
-//  Created by Sven Holmgren on 1/8/13.
+//  Created by Sven Holmgren on 1/9/13.
+//
 //
 
-#import "Collectible.h"
+#import "Obstacle.h"
 
-@implementation Collectible
+@implementation Obstacle
 @synthesize body;
 
 - (id) init {
     self = [super init];
     
     if (self) {
-        self.tag=TAG_COLLECTIBLE;
+        self.tag=TAG_OBSTACLE;
     }
     
     return self;
@@ -22,7 +23,7 @@
 
 -(void) createBox2dObject:(b2World*)world isCircle:(BOOL) isCircle{
     b2BodyDef playerBodyDef;
-    playerBodyDef.type = b2_dynamicBody;
+    playerBodyDef.type =b2_staticBody;
     playerBodyDef.position.Set(self.position.x/PTM_RATIO, self.position.y/PTM_RATIO);
     playerBodyDef.userData = self;
     playerBodyDef.fixedRotation = true;
@@ -45,15 +46,15 @@
         shape=&boxShape;
     }
     
-    
     b2FixtureDef fixtureDef;
     fixtureDef.shape = shape;
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 1.0f;
     fixtureDef.restitution = 0.0f;
+
     
     body->CreateFixture(&fixtureDef);
-    self.tag=TAG_COLLECTIBLE;
+    self.tag=TAG_OBSTACLE;
 }
 
 - (void)dealloc

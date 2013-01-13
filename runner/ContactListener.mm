@@ -15,8 +15,7 @@ ContactListener::~ContactListener() {
 }
 
 void ContactListener::BeginContact(b2Contact* contact) {
-    // We need to copy out the data because the b2Contact passed in
-    // is reused.
+    // We need to copy out the data because the b2Contact passed in is reused.
     Contact myContact = { contact->GetFixtureA(), contact->GetFixtureB() };
     _contacts.push_back(myContact);
 }

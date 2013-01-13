@@ -15,4 +15,9 @@
 - (void) update
 {}
 
+- (void)dealloc
+{
+    [super dealloc];
+}
+
 @end
