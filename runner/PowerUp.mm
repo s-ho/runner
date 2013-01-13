@@ -1,20 +1,21 @@
 //
-//  Obstacle.m
+//  PowerUp.m
 //  runner
 //
-//  Created by Sven Holmgren on 1/9/13.
+//  Created by Sven Holmgren on 1/13/13.
+//
 //
 
-#import "Obstacle.h"
+#import "PowerUp.h"
 
-@implementation Obstacle
+@implementation PowerUp
 @synthesize body;
 
 - (id) init {
     self = [super init];
     
     if (self) {
-        self.tag=TAG_OBSTACLE;
+        self.tag=TAG_POWERUP;
     }
     
     return self;
@@ -22,7 +23,7 @@
 
 -(void) createBox2dObject:(b2World*)world isCircle:(BOOL) isCircle{
     b2BodyDef playerBodyDef;
-    playerBodyDef.type =b2_staticBody;
+    playerBodyDef.type = b2_dynamicBody;
     playerBodyDef.position.Set(self.position.x/PTM_RATIO, self.position.y/PTM_RATIO);
     playerBodyDef.userData = self;
     playerBodyDef.fixedRotation = true;
@@ -40,25 +41,26 @@
     else //box
     {
         b2PolygonShape boxShape;
-        boxShape.SetAsBox(([self boundingBox].size.width/2-5.0f)/PTM_RATIO, ([self boundingBox].size.height/2-5.0f)/PTM_RATIO);
+        boxShape.SetAsBox([self boundingBox].size.width/2/PTM_RATIO, [self boundingBox].size.height/2/PTM_RATIO);
         
         shape=&boxShape;
     }
     
+    
     b2FixtureDef fixtureDef;
     fixtureDef.shape = shape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 1.0f;
-    fixtureDef.restitution = 0.0f;
-
+    fixtureDef.density = 0.0f;
+    fixtureDef.friction = 0.0f;
+    fixtureDef.restitution = 1.0f;
     
     body->CreateFixture(&fixtureDef);
-    self.tag=TAG_OBSTACLE;
+    self.tag=TAG_POWERUP;
 }
 
 - (void)dealloc
 {
     [super dealloc];
 }
+
 
 @end

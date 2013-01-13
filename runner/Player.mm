@@ -10,6 +10,10 @@
 
 @implementation Player
 @synthesize body;
+@synthesize isAlive;
+@synthesize powerUps;
+@synthesize collectibles;
+
 
 - (id) init {
     self = [super init];
@@ -32,7 +36,7 @@
     
     
     b2PolygonShape shape;
-    shape.SetAsBox([self boundingBox].size.width/2/PTM_RATIO, [self boundingBox].size.height/2/PTM_RATIO);
+    shape.SetAsBox([self boundingBox].size.width/2.0f/PTM_RATIO, [self boundingBox].size.height/2.0f/PTM_RATIO);
     
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
@@ -50,16 +54,16 @@
 }
 
 -(void) moveRight {
-    b2Vec2 impulse = b2Vec2(PLAYER_SPEED, 0.0f);
+    b2Vec2 impulse = b2Vec2(PLAYER_SPEED, (body->GetLinearVelocity()).y);
     body->SetLinearVelocity(impulse);
 }
 
--(void) jump {
+-(void) jump:(int)power {
     //with timing, it is possible to jump in air
     
     if(isAlive){
     if(abs((body->GetLinearVelocity()).y)<0.01f){
-        b2Vec2 impulse = b2Vec2(0.0f, 50.0f);
+        b2Vec2 impulse = b2Vec2(0.0f, power*25.0f);
         body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
     }
     }

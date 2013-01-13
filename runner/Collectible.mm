@@ -48,9 +48,9 @@
     
     b2FixtureDef fixtureDef;
     fixtureDef.shape = shape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 1.0f;
-    fixtureDef.restitution = 0.0f;
+    fixtureDef.density = 0.0f;
+    fixtureDef.friction = 0.0f;
+    fixtureDef.restitution = 1.0f;
     
     body->CreateFixture(&fixtureDef);
     self.tag=TAG_COLLECTIBLE;

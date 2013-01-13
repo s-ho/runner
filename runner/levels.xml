@@ -19,20 +19,25 @@
     </obstacles>
     <collectibles>
       <collectible>
-        <file>car.png</file>
+        <file>notes.png</file>
         <atPosition>3000.0</atPosition>
         <isCircle>NO</isCircle>
       </collectible>
       <collectible>
-        <file>car.png</file>
+        <file>notes.png</file>
         <atPosition>1500.0</atPosition>
         <isCircle>NO</isCircle>
       </collectible>
     </collectibles>
     <powerups>
+    <powerup>
+            <file>powerup.png</file>
+            <atPosition>500.0</atPosition>
+            <isCircle>YES</isCircle>
+    </powerup>
       <powerup>
         <file>powerup.png</file>
-        <atPosition>3500.0</atPosition>
+        <atPosition>9500.0</atPosition>
         <isCircle>YES</isCircle>
       </powerup>
     </powerups>

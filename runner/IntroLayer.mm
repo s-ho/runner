@@ -63,11 +63,13 @@ static const ccColor3B ccDARKRED={139,0,0};
 
 -(void) createMenu
 {
-    [CCMenuItemFont setFontSize:22];
     // Play Button
+    [CCMenuItemFont setFontSize:22];
     CCMenuItemLabel *play = [CCMenuItemFont itemWithString:@"Play" block:^(id sender){
         [self scheduleOnce:@selector(makeTransition:) delay:1];
     }];
+    [play setColor:(ccDARKRED)];
+    
     
     //sound button
     CCMenuItem *soundOnItem = [CCMenuItemImage itemWithNormalImage:@"unmuted.png"
@@ -84,9 +86,6 @@ static const ccColor3B ccDARKRED={139,0,0};
 
     
     
-    
-    [play setColor:(ccDARKRED)];
-    
     CCMenu *menu = [CCMenu menuWithItems:play,soundToggler, nil];
     
     [menu alignItemsVertically];
@@ -102,4 +101,5 @@ static const ccColor3B ccDARKRED={139,0,0};
 {
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:dt scene:[WorldLayer level:1] withColor:ccWHITE]];
 }
+
 @end

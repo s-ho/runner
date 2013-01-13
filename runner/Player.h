@@ -14,13 +14,18 @@
     b2Body *body;
     
     bool isAlive;
+    int powerUps;
+    int collectibles;
 }
 
 -(void) createBox2dObject:(b2World*)world;
--(void) jump;
+-(void) jump:(int)power;
 -(void) moveRight;
 -(void) die;
 
 @property (nonatomic, readwrite) b2Body *body;
+@property (readonly) bool isAlive;
+@property (readwrite) int powerUps;
+@property (readwrite) int collectibles;
 
 @end
