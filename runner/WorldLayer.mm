@@ -58,8 +58,8 @@ enum {
         // iterate levels to find the current one
         [TBXML iterateElementsForQuery:@"level" fromElement:rootXMLElement withBlock:^(TBXMLElement *levelXMLElement) {
             
-           NSString * name = [TBXML valueOfAttributeNamed:@"name" forElement:levelXMLElement];
-        //
+        NSString * name = [TBXML valueOfAttributeNamed:@"name" forElement:levelXMLElement];
+        
             if([name intValue]==level){
                 self->currentLevel=level;
                 
